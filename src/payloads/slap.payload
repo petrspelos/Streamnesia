@@ -1,0 +1,1 @@
+GivePlayerDamage(20.0f, "Claws", true, false);

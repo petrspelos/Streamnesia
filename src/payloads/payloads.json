@@ -1,0 +1,290 @@
+[
+    {
+        "Name": "Surround with barrels",
+        "File": "barrels.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Give full lantern oil",
+        "File": "full-oil.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Jumpscare",
+        "File": "jumpscare.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Spawn Brute (10 seconds)",
+        "File": "spawn-brute.payload",
+        "Duration": "00:00:10",
+        "Antidote": "spawn-brute.anti.payload"
+    },
+    {
+        "Name": "Random Insanity Effect",
+        "File": "random-insanity-effect.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Slow player (20 seconds)",
+        "File": "slowdown.payload",
+        "Duration": "00:00:20",
+        "Antidote": "slowdown.anti.payload"
+    },
+    {
+        "Name": "Tiny player (10 seconds)",
+        "File": "tiny-player.payload",
+        "Duration": "00:00:10",
+        "Antidote": "tiny-player.anti.payload"
+    },
+    {
+        "Name": "Upside down (1 minute)",
+        "File": "upside-down.payload",
+        "Duration": "00:01:00",
+        "Antidote": "upside-down.anti.payload"
+    },
+    {
+        "Name": "Low Sanity (20 seconds)",
+        "File": "low-sanity.payload",
+        "Duration": "00:00:20",
+        "Antidote": "low-sanity.anti.payload"
+    },
+    {
+        "Name": "Spawn Goodies",
+        "File": "goodies.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Rain",
+        "File": "rain.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Silent Hill (Fog)",
+        "File": "silent-hill.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Almost Blind (30 seconds)",
+        "File": "almost-blind.payload",
+        "Duration": "00:00:30",
+        "Antidote": "almost-blind.anti.payload"
+    },
+    {
+        "Name": "Completely Blind (10 seconds)",
+        "File": "blind.payload",
+        "Duration": "00:00:10",
+        "Antidote": "blind.anti.payload"
+    },
+    {
+        "Name": "Sepia Vision (30 seconds)",
+        "File": "sepia.payload",
+        "Duration": "00:00:30",
+        "Antidote": "sepia.anti.payload"
+    },
+    {
+        "Name": "Show Bugs on screen",
+        "File": "bugs.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Play monster roar",
+        "File": "roar.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Paralyze player (5 seconds)",
+        "File": "paralyze.payload",
+        "Duration": "00:00:05",
+        "Antidote": "paralyze.anti.payload"
+    },
+    {
+        "Name": "Slap Player",
+        "File": "slap.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Screen Shake (10 seconds)",
+        "File": "shake.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Spawn Grunt randomly",
+        "File": "random-grunt.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Play random spooky music",
+        "File": "spooky-music.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Megajump (1 minute)",
+        "File": "jump.payload",
+        "Duration": "00:01:00",
+        "Antidote": "jump.anti.payload"
+    },
+    {
+        "Name": "All lights out",
+        "File": "lamps-off.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Quake FOV (30 seconds)",
+        "File": "fov.payload",
+        "Duration": "00:00:30",
+        "Antidote": "fov.anti.payload"
+    },
+    {
+        "Name": "Zoom vision (30 seconds)",
+        "File": "zoom.payload",
+        "Duration": "00:00:30",
+        "Antidote": "fov.anti.payload"
+    },
+    {
+        "Name": "Give 3 tinderboxes",
+        "File": "tinderboxes.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Give large oil",
+        "File": "large-oil.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Shower with coins",
+        "File": "coins.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Spawn door near player",
+        "File": "door.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Spawn small cross",
+        "File": "cross.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Wide Putin",
+        "File": "putin.payload",
+        "Duration": "00:00:15",
+        "Antidote": "putin.anti.payload"
+    },
+    {
+        "Name": "Yeet backwards",
+        "File": "yeet-back.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Invisible Entities (30 seconds)",
+        "File": "invisible.payload",
+        "Duration": "00:00:15",
+        "Antidote": "invisible.anti.payload"
+    },
+    {
+        "Name": "All oil to player",
+        "File": "map-oil.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "All interact icons are LevelDoor",
+        "File": "leveldoor.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Close ALL doors",
+        "File": "closedoors.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Show all enemies player position",
+        "File": "show-enemy-pos.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Chairs slowly disappear",
+        "File": "fade-chairs.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Closets slowly disappear",
+        "File": "fade-closets.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Out of lantern oil",
+        "File": "no-oil.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Near death health",
+        "File": "near-death.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Full health",
+        "File": "full-hp.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Yeet forward",
+        "File": "yeet-forward.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Skyrim wakeup",
+        "File": "skyrim.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Spin screen (10 seconds)",
+        "File": "screen-spin.payload",
+        "Duration": "00:00:07",
+        "Antidote": "screen-spin.anti.payload"
+    },
+    {
+        "Name": "UwU nuzzles (please don't)",
+        "File": "uwu.payload",
+        "Duration": "00:00:07",
+        "Antidote": "uwu.anti.payload"
+    },
+    {
+        "Name": "Unlock all doors",
+        "File": "unlock.payload",
+        "Duration": null,
+        "Antidote": null
+    }
+]

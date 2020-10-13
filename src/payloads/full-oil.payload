@@ -1,0 +1,3 @@
+SetMessageExact("Lucky you, full oil...", 0.0f);
+
+SetPlayerLampOil(100.0f);

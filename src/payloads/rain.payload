@@ -1,0 +1,9 @@
+float baseX = GetPlayerPosX();
+float baseY = GetPlayerPosY();
+float baseZ = GetPlayerPosZ();
+
+PlaySoundAtEntity("raining", "general_rain.snt", "Player", 0.0f, false);
+SetMessageExact("It's raining!", 0.0f);
+CreateEntityAtFirstArea("{0}cursor", "block_box_nonchar.ent", false);
+SetEntityPos("{0}cursor", baseX, baseY + 10.0f, baseZ);
+CreateParticleSystemAtEntity("rain", "ps_water_rain.ps", "{0}cursor", false);

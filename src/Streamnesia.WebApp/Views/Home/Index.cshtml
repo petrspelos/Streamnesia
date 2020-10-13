@@ -1,0 +1,89 @@
+﻿<style>
+    #voteRemainingTime {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        left: 0;
+    }
+
+    body {
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    .option {
+        background-color: rgba(255, 255, 255, 0.9);
+        width: 400px;
+        float: left;
+        padding: 20px;
+        margin: 10px;
+        box-shadow: 0px 2px 4px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .option > h1 {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .votes {
+        text-align: center;
+        font-weight: bold;
+        float: right;
+    }
+
+    .cmd {
+        text-align: center;
+        color: rgb(0, 0, 0);
+    }
+
+</style>
+
+<div class="progress" id="voteRemainingTime">
+  <div id="t" class="progress-bar bg-warning" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+
+<div style="position: absolute; top: 20px; width: 100%; left: 0; min-height: 10%;" id="cardsContainer">
+
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script>
+var connection = new signalR.HubConnectionBuilder().withUrl("/updatehub").build();
+
+function cardFromData(data) {
+    var title = document.createElement('h1');
+    title.textContent = data.name;
+
+    var votes = document.createElement('span');
+    votes.classList.add('votes');
+    votes.textContent = data.votes;
+
+    var command = document.createElement('span');
+    command.classList.add('cmd');
+    command.textContent = data.description;
+    
+    var div = document.createElement('div');
+    div.classList.add('option');
+
+    div.appendChild(title);
+    div.appendChild(votes);
+    div.appendChild(command);
+
+    return div;
+}
+
+var f = document.getElementById('t');
+var cont = document.getElementById('cardsContainer')
+connection.on("UpdateTimePercentage", function (data) {
+    f.style.setProperty('width', data.percentage + '%');
+    cont.innerHTML = "";
+    for(let i = 0; i < data.options.length; i++)
+    {
+        cont.appendChild(cardFromData(data.options[i]));
+    }
+});
+
+connection.start();
+</script>

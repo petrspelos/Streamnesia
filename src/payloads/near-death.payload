@@ -1,0 +1,2 @@
+SetMessageExact("1 HP, lol", 0.0f);
+SetPlayerHealth(1.0f);

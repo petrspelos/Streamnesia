@@ -1,0 +1,4 @@
+PlayGuiSound("putin-short.ogg", 0.7f);
+SetPlayerMoveSpeedMul(0.3f);
+SetPlayerRunSpeedMul(0.4f);
+FadePlayerAspectMulTo(0.4f, 5.0f);

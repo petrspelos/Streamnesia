@@ -1,0 +1,14 @@
+SetMessageExact("Brute is here...", 0.0f);
+float baseX = GetPlayerPosX();
+float baseY = GetPlayerPosY();
+float baseZ = GetPlayerPosZ();
+if(GetEntityExists("StreamnesiaBrute"))
+{{
+    SetEntityActive("StreamnesiaBrute", true);
+}}
+else
+{{
+    CreateEntityAtFirstArea("StreamnesiaBrute", "servant_brute.ent", true);
+}}
+
+SetEntityPos("StreamnesiaBrute", baseX + 2.0f, baseY, baseZ);

@@ -1,0 +1,4 @@
+SetMessageExact("No running for you, buddy...", 0.0f);
+
+SetPlayerRunSpeedMul(0.0f);
+SetPlayerMoveSpeedMul(0.6f);

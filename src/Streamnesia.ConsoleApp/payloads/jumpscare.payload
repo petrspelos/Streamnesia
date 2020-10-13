@@ -1,0 +1,2 @@
+PlayGuiSound("24_iron_maiden.ogg", 1.0f);
+GiveSanityDamage(10.0f, true);

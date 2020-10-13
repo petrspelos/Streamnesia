@@ -1,0 +1,18 @@
+float baseX = GetPlayerPosX();
+float baseY = GetPlayerPosY();
+float baseZ = GetPlayerPosZ();
+
+for(int t = 0; t < 5; t++)
+{{
+    CreateEntityAtFirstArea("{0}tinder" + t, "tinderbox.ent", false);
+    SetEntityPos("{0}tinder" + t, baseX + 1.0f + (t * 0.1f), baseY, baseZ);
+}}
+
+for(int o = 0; o < 3; o++)
+{{
+    CreateEntityAtFirstArea("{0}oil" + o, "potion_oil.ent", false);
+    SetEntityPos("{0}oil" + o, baseX + 1.0f + (o * 0.1f), baseY, baseZ + 0.5f);
+}}
+
+CreateEntityAtFirstArea("{1}", "potion_health.ent", false);
+SetEntityPos("{1}", baseX + -1.0f, baseY, baseZ);

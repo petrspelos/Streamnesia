@@ -1,0 +1,2 @@
+SetMessageExact("THINGS ARE INVISIBLE FOR 30 SECONDS", 0.0f);
+SetEntityVisible("*", false);

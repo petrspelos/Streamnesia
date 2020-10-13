@@ -1,0 +1,11 @@
+SetMessageExact("COINS!!!", 0.0f);
+
+float baseX = GetPlayerPosX();
+float baseY = GetPlayerPosY();
+float baseZ = GetPlayerPosZ();
+
+for(int i = 0; i < 10; i++)
+{{
+    CreateEntityAtFirstArea("{1}" + i, "coins_large.ent", false);
+    SetEntityPos("{1}" + i, baseX, baseY + 3.0f, baseZ);
+}}

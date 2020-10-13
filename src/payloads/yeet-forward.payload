@@ -1,0 +1,2 @@
+SetMessageExact("YEEET!", 0.0f);
+AddPlayerBodyForce(0.0f, 0.0f, 80000.0f, true);

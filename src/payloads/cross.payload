@@ -1,0 +1,11 @@
+SetMessageExact("You need Jesus!", 0.0f);
+
+float baseX = GetPlayerPosX();
+float baseY = GetPlayerPosY();
+float baseZ = GetPlayerPosZ();
+
+for(int i = 0; i < 5; i++)
+{{
+    CreateEntityAtFirstArea("{1}" + i, "cross_small_wood.ent", false);
+    SetEntityPos("{1}" + i, baseX + 0.8f, baseY + 1.5f, baseZ);
+}}

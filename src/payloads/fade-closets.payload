@@ -1,0 +1,3 @@
+SetMessageExact("Closets disappear...", 0.0f);
+SetPropActiveAndFade("*closet*", false, 5.0f);
+SetPropActiveAndFade("*cabinet*", false, 5.0f);

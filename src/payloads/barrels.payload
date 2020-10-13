@@ -1,0 +1,19 @@
+float baseX = GetPlayerPosX();
+float baseY = GetPlayerPosY();
+float baseZ = GetPlayerPosZ();
+
+for(int x = -1; x < 2; x++)
+{{
+    for(int z = -1; z < 2; z++)
+    {{
+        if(x == 0 && z == 0)
+        {{
+            continue;
+        }}
+        CreateEntityAtFirstArea("{0}" + x + z, "barrel01.ent", true);
+        SetEntityPos("{0}" + x + z, baseX + x, baseY + 0.5f, baseZ + z);
+        
+        CreateEntityAtFirstArea("{1}" + x + z, "barrel01.ent", true);
+        SetEntityPos("{1}" + x + z, baseX + x, baseY + 1.5f, baseZ + z);
+    }}  
+}}

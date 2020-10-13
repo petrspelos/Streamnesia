@@ -1,0 +1,2 @@
+SetMessageExact("Brute left...", 0.0f);
+SetEntityActive("StreamnesiaBrute", false);

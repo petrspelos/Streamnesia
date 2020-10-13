@@ -1,0 +1,4 @@
+SetMessageExact("3 tinderboxes added...", 0.0f);
+GiveItemFromFile("tinderbox", "tinderbox.ent");
+GiveItemFromFile("tinderbox", "tinderbox.ent");
+GiveItemFromFile("tinderbox", "tinderbox.ent");
