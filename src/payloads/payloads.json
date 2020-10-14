@@ -286,5 +286,11 @@
         "File": "unlock.payload",
         "Duration": null,
         "Antidote": null
+    },
+    {
+        "Name": "Lantern Produces No Light (30 seconds)",
+        "File": "lantern_nolight.payload",
+        "Duration": "00:00:30",
+        "Antidote": "lantern_nolight.anti.payload"
     }
 ]
