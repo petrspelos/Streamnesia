@@ -286,5 +286,11 @@
         "File": "unlock.payload",
         "Duration": null,
         "Antidote": null
+    },
+    {
+        "Name": "Faster Player Speed (25 seconds)",
+        "File": "increase_player_speed.payload",
+        "Duration": "00:00:25",
+        "Antidote": "increase_player_speed.anti.payload"
     }
 ]
