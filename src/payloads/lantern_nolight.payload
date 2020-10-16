@@ -1,3 +1,0 @@
-FadeLightTo("PlayerHands_PointLight_1", 0, 0, 0, 0, 0.1, 1.0f);
-FadeLightTo("PlayerHands_PointLight_2", 0, 0, 0, 0, 0.1, 1.0f);
-SetMessageExact("Lantern light is out!", 4.5f)
