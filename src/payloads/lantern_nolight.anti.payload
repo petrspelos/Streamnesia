@@ -1,2 +1,0 @@
-FadeLightTo("PlayerHands_PointLight_1", 0.845f, 0.69f, 0.155f, 0.689f, 10, 1.0f);
-FadeLightTo("PlayerHands_PointLight_2", 0.319f, 0.222f, 0.103f, 0, 0.3, 1.0f);
