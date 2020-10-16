@@ -298,5 +298,17 @@
         "File": "brute_spawn_sfx.payload",
         "Duration": null,
         "Antidote": null
+    },
+    {
+        "Name": "Tilt Player Head 45 Degrees (30 seconds)",
+        "File": "tilt_player_head.payload",
+        "Duration": "00:00:30",
+        "Antidote": "tilt_player_head.anti.payload"
+    },
+    {
+        "Name": "Faster Player Speed (25 seconds)",
+        "File": "increase_player_speed.payload",
+        "Duration": "00:00:25",
+        "Antidote": "increase_player_speed.anti.payload"
     }
 ]
