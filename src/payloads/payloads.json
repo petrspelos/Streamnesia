@@ -288,9 +288,15 @@
         "Antidote": null
     },
     {
-        "Name": "Lantern Produces No Light (30 seconds)",
-        "File": "lantern_nolight.payload",
-        "Duration": "00:00:30",
-        "Antidote": "lantern_nolight.anti.payload"
+        "Name": "Play Grunt Spawn Sound Effect",
+        "File": "grunt_spawn_sfx.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Play Brute Spawn Sound Effect",
+        "File": "brute_spawn_sfx.payload",
+        "Duration": null,
+        "Antidote": null
     }
 ]
