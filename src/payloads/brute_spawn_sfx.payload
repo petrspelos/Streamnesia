@@ -1,0 +1,1 @@
+PlaySoundAtEntity("", "enemy/brute/enabled.snt", "Player", 0.0f, false);

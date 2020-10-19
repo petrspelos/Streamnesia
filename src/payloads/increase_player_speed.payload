@@ -1,0 +1,2 @@
+SetPlayerMoveSpeedMul(1.5f);
+SetMessageExact("You're fast now!", 0.0f);
