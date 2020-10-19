@@ -1,0 +1,2 @@
+SetPlayerLookSpeedMul(0.2);
+SetMessageExact("You're a bit stiff...", 0.0f);
