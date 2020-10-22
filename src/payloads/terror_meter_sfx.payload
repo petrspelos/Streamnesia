@@ -1,0 +1,1 @@
+PlaySoundAtEntity("screamnesia_terrormeter", "ui_terror_meter.snt", "Player", 2.5f, true);

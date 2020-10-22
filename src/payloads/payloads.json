@@ -310,5 +310,17 @@
         "File": "increase_player_speed.payload",
         "Duration": "00:00:25",
         "Antidote": "increase_player_speed.anti.payload"
+    },
+    {
+        "Name": "Decrease Player Look Speed (20 seconds)",
+        "File": "decrease_player_look_speed.payload",
+        "Duration": "00:00:20",
+        "Antidote": "decrease_player_look_speed.anti.payload"
+    },
+    {
+        "Name": "Play Chase Sound Effect (10 seconds)",
+        "File": "terror_meter_sfx.payload",
+        "Duration": "00:00:10",
+        "Antidote": "terror_meter_sfx.anti.payload"
     }
 ]
