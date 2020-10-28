@@ -2,6 +2,12 @@
 
 Streamnesia is a "Chaos Mod", meaning it changes what happens during your playthrough of the game. Your screen can be upside down for a minute, or maybe all doors unlock. In the base package, there are around 40 different events.
 
+## Payloads
+
+:warning: **This repository does not include payloads anymore... Those have been moved into it's own repository for easier sync:**
+
+https://github.com/petrspelos/streamnesia-payloads
+
 ## Install & Play
 
 1. See the [Release Page](https://github.com/petrspelos/Streamnesia/releases) and download a build of the mod
