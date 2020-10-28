@@ -322,5 +322,23 @@
         "File": "terror_meter_sfx.payload",
         "Duration": "00:00:10",
         "Antidote": "terror_meter_sfx.anti.payload"
+    },
+    {
+        "Name": "Cave-in explosion",
+        "File": "explosion_jumpscare.payload",
+        "Duration": null,
+        "Antidote": null
+    },
+    {
+        "Name": "Disable jump and crouch (1 minute)",
+        "File": "disable_jump_crouch.payload",
+        "Duration": "00:01:00",
+        "Antidote": "disable_jump_crouch.anti.payload"
+    },
+    {
+        "Name": "Red fog",
+        "File": "red_fog.payload",
+        "Duration": null,
+        "Antidote": null
     }
 ]
