@@ -1,9 +1,0 @@
-SetMessageExact("Knock Knock", 0.0f);
-
-float baseX = GetPlayerPosX();
-float baseY = GetPlayerPosY();
-float baseZ = GetPlayerPosZ();
-
-CreateEntityAtFirstArea("StreamnesiaDoor", "block_box_nonchar.ent", false);
-SetEntityPos("StreamnesiaDoor", baseX, baseY, baseZ + 1.5f);
-ReplaceEntity("StreamnesiaDoor", "", "StreamnesiaDoor", "castle.ent", false);

@@ -1,4 +1,0 @@
-SetMessageExact("Running back to normal!", 0.0f);
-
-SetPlayerRunSpeedMul(1.0f);
-SetPlayerMoveSpeedMul(1.0f);

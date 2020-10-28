@@ -1,2 +1,0 @@
-SetPlayerActive(false);
-SetMessageExact("You cannot move for 5 seconds...", 5.0f);

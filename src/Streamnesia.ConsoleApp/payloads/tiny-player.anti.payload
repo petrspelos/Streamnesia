@@ -1,3 +1,0 @@
-MovePlayerHeadPos(0.0f, -0.0f, 0.0f, 20.0f, 0.5f);
-SetPlayerRunSpeedMul(1.0f);
-SetPlayerMoveSpeedMul(1.0f);
