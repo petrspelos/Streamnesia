@@ -1,2 +1,0 @@
-SetMessageExact("They know where you are...", 0.0f);
-ShowEnemyPlayerPosition("*");

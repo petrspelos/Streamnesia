@@ -1,2 +1,0 @@
-SetMessageExact("All doors closed.", 0.0f);
-SetSwingDoorClosed("*", true, true);

@@ -1,2 +1,0 @@
-SetMessageExact("All lights out...", 0.0f);
-SetLampLit("*", false, true);

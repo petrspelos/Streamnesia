@@ -1,3 +1,0 @@
-SetPlayerMoveSpeedMul(1.0f);
-SetPlayerRunSpeedMul(1.0f);
-FadePlayerAspectMulTo(1.0f, 10.0f);

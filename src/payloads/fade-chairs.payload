@@ -1,2 +1,0 @@
-SetPropActiveAndFade("*chair*", false, 5.0f);
-SetPropActiveAndFade("*stool*", false, 5.0f);

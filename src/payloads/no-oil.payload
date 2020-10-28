@@ -1,3 +1,0 @@
-SetMessageExact("All your oil spilled on the ground. :(", 0.0f);
-CreateParticleSystemAtEntity("oil", "ps_oil_stream_from_pipe.ps", "Player", false);
-SetPlayerLampOil(0.0f);

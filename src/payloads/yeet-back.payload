@@ -1,2 +1,0 @@
-SetMessageExact("YEEET!", 0.0f);
-AddPlayerBodyForce(0.0f, 0.0f, -40000.0f, true);

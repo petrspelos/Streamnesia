@@ -1,4 +1,0 @@
-PlayGuiSound("nuzzlefull.ogg", 1.0f);
-SetPlayerSanity(0.0f);
-SetPlayerHealth(1.0f);
-GiveSanityDamage(1.0f, true);

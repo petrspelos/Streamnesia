@@ -1,2 +1,0 @@
-SetMessageExact("ALL DOORS ARE UNLOCKED!" float_afTime);
-SetSwingDoorLocked("*", false);

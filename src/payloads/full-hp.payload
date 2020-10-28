@@ -1,4 +1,0 @@
-SetMessageExact("FULL HEALTH!", 0.0f);
-SetPlayerHealth(100.0f);
-GiveSanityBoostSmall();
-PlayGuiSound("calleddoctor.ogg", 1.0f);

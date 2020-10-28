@@ -1,7 +1,0 @@
-SetMessageExact("All oil potions from the entire map teleported to you.", 0.0f);
-
-float x = GetPlayerPosX();
-float y = GetPlayerPosY();
-float z = GetPlayerPosZ();
-
-SetEntityPos("*oil*", x + 0.5f, y + 0.5f, z);

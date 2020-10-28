@@ -1,2 +1,0 @@
-SetMessageExact("You got a large oil!", 0.0f);
-GiveItemFromFile("oil", "potion_oil_large.ent");

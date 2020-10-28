@@ -1,2 +1,0 @@
-SetMessageExact("You are blind for 10 seconds...", 5.0f);
-FadeOut(0.5f);

@@ -1,2 +1,0 @@
-SetMessageExact("MEGAJUMP", 0.0f);
-SetPlayerJumpForceMul(5.0f);

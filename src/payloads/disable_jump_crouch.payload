@@ -1,3 +1,0 @@
-SetPlayerJumpDisabled(true);
-SetPlayerCrouchDisabled(true);
-SetMessageExact("No crouching or jumping for you!", 0.0f);
