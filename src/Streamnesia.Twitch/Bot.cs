@@ -13,12 +13,14 @@ namespace Streamnesia.Twitch
 {
     public class Bot
     {
-        TwitchClient client;
-        private string _channel = "";
+        private readonly TwitchClient client;
+
         public Action<int> OnCommandSelected;
         public Action<string> OnMessageSent;
         public Action<string, int> OnVoted;
         public Action<string> OnDeathSet;
+        public Action<int> DevPayload;
+        public Action<string> DevCommand;
 	
         Dictionary<string, DateTime> CooldownTable;
 
@@ -76,7 +78,6 @@ namespace Streamnesia.Twitch
         private void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
             client.SendMessage(e.Channel, "Streamnesia is up and running.");
-            _channel = e.Channel;
         }
 
         private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
@@ -154,7 +155,9 @@ namespace Streamnesia.Twitch
         
         private void Client_OnWhisperReceived(object sender, OnWhisperReceivedArgs e)
         {
-            if (e.WhisperMessage.Username == "my_friend")
+            Console.WriteLine(e.WhisperMessage.UserId);
+
+            if (e.WhisperMessage.UserId == "my_friend")
                 client.SendWhisper(e.WhisperMessage.Username, "Hey! Whispers are so cool!!");
         }
         
