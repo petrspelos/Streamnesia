@@ -31,8 +31,9 @@ namespace Streamnesia.Twitch
         {
             if (!File.Exists(BotConfigFile))
             {
+                File.WriteAllText(BotConfigFile, JsonConvert.SerializeObject(new BotConfig()));
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"{BotConfigFile} is missing!");
+                Console.WriteLine($"Please fill your {BotConfigFile} in the streamnesia directory.");
                 Console.ResetColor();
                 throw new Exception("Config file was not found");
             }
@@ -49,7 +50,7 @@ namespace Streamnesia.Twitch
 
             CooldownTable = new Dictionary<string, DateTime>();
             ConnectionCredentials credentials = new ConnectionCredentials(config.BotName, config.BotApiKey);
-	    var clientOptions = new ClientOptions
+	        var clientOptions = new ClientOptions
                 {
                     MessagesAllowedInPeriod = 750,
                     ThrottlingPeriod = TimeSpan.FromSeconds(30)
@@ -176,8 +177,8 @@ namespace Streamnesia.Twitch
 
     public class BotConfig
     {
-        public string BotApiKey { get; set; }
-        public string BotName { get; set; }
-        public string TwitchChannelName { get; set; }
+        public string BotApiKey { get; set; } = "YOUR-API-KEY-HERE";
+        public string BotName { get; set; } = "YOUR-BOT-NAME";
+        public string TwitchChannelName { get; set; } = "TWITCH-CHANNEL-NAME";
     }
 }
