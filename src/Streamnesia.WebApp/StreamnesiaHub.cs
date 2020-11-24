@@ -146,7 +146,7 @@ namespace Streamnesia.WebApp
                 options = options.Select(p => new {
                     name = p.Name,
                     votes = p.Votes,
-                    description = $"Send <code>{p.Index}</code> in the chat to vote for:"
+                    description = $"Send <code class='code-pop'>{p.Index}</code> in the chat to vote for:"
                 }),
                 rapidFire = isRapidMode
             } });

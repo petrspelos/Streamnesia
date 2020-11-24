@@ -10,14 +10,14 @@ namespace Streamnesia.CommandProcessing
     public class CommandQueue
     {
         private ConcurrentQueue<Payload> _payloadQueue = new ConcurrentQueue<Payload>();
-        private ConcurrentStack<PayloadExtension> _instructionStack = new ConcurrentStack<PayloadExtension>();
+        private ConcurrentQueue<PayloadExtension> _instructionQueue = new ConcurrentQueue<PayloadExtension>();
 
         public async Task StartCommandProcessingAsync(CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
                 await ProcessCommandQueue();
-                await ProcessInstructionStack();
+                await ProcessInstructionQueue();
                 await Task.Delay(TimeSpan.FromSeconds(0.5), cancellationToken);
             }
         }
@@ -46,7 +46,7 @@ namespace Streamnesia.CommandProcessing
 
             if(_payloadQueue.TryDequeue(out var payload) == false)
             {
-                Console.WriteLine("A dequeue of an instruction failed");
+                Console.WriteLine("A dequeue of a payload failed");
                 return Task.CompletedTask;
             }
 
@@ -54,24 +54,24 @@ namespace Streamnesia.CommandProcessing
             return Task.CompletedTask;
         }
 
-        private async Task ProcessInstructionStack()
+        private async Task ProcessInstructionQueue()
         {
             if(!Amnesia.LastInstructionWasExecuted())
                 return;
             
             PayloadExtension extension;
 
-            for(var i = 0; i < _instructionStack.Count; i++)
+            for(var i = 0; i < _instructionQueue.Count; i++)
             {
-                if(_instructionStack.TryPop(out extension) == false)
+                if(_instructionQueue.TryDequeue(out extension) == false)
                 {
-                    Console.WriteLine("Failed to pop");
+                    Console.WriteLine("Failed to dequeue an instruction");
                     return;
                 }
 
                 if(DateTime.Now < extension.ExecuteAfterDateTime)
                 {
-                    _instructionStack.Push(extension);
+                    _instructionQueue.Enqueue(extension);
                     continue;
                 }
 
@@ -84,7 +84,7 @@ namespace Streamnesia.CommandProcessing
         {
             foreach (var sequenceItem in payload.Sequence)
             {
-                _instructionStack.Push(new PayloadExtension
+                _instructionQueue.Enqueue(new PayloadExtension
                 {
                     Angelcode = sequenceItem.AngelCode,
                     ExecuteAfterDateTime = DateTime.Now.Add(sequenceItem.Delay)
