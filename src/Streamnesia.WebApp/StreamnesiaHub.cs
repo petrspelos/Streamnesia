@@ -26,7 +26,6 @@ namespace Streamnesia.WebApp
             var poll = new CommandPolling();
             IPayloadLoader payloadLoader = new LocalPayloadLoader();
 
-
             CommandQueue cmdQueue = new CommandQueue();
             _ = cmdQueue.StartCommandProcessingAsync(CancellationToken.None);
 
@@ -34,40 +33,6 @@ namespace Streamnesia.WebApp
             var bot = new Bot();
             var isRapidMode = false;
             var rng = new Random();
-
-            try
-            {
-                Console.WriteLine("Waiting for 5 seconds before payload emulation...");
-                await Task.Delay(TimeSpan.FromSeconds(5));
-
-                Action pAction = () =>
-                {
-                    cmdQueue.AddPayloadAsync(payloads.ElementAt(rng.Next(0, 66)));
-                };
-
-                for(var i = 0; i < 20; i++)
-                {
-                    Console.WriteLine("Executing MAIN PAYLOAD three times");
-                    Parallel.Invoke(pAction, pAction, pAction);
-                    await Task.Delay(100);
-                }
-
-                for(var i = 0; i < 100; i++)
-                {
-                    Console.WriteLine("Executing");
-                    Parallel.Invoke(pAction);
-                }
-
-                Console.WriteLine("Execution finished...");
-                await Task.Delay(-1);
-                return;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-
-            return;
 
             bot.OnVoted = (displayname, vote) => {
                 if(vote < 0)
