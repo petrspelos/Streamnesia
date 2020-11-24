@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Collections.Generic;
 using TwitchLib.Client;
@@ -24,19 +24,22 @@ namespace Streamnesia.Twitch
 	
         Dictionary<string, DateTime> CooldownTable;
 
+        private const string BotConfigFile = "bot-config.json";
+        private const string DeveloperUserId = "24577783";
+
         public Bot()
         {
-            if(!File.Exists("bot-config.json"))
+            if (!File.Exists(BotConfigFile))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("bot-config.json is missing!");
+                Console.WriteLine($"{BotConfigFile} is missing!");
                 Console.ResetColor();
                 throw new Exception("Config file was not found");
             }
 
-            var config = JsonConvert.DeserializeObject<BotConfig>(File.ReadAllText("bot-config.json"));
+            var config = JsonConvert.DeserializeObject<BotConfig>(File.ReadAllText(BotConfigFile));
 
-            if(config.BotApiKey == "YOUR-API-KEY-HERE")
+            if (config.BotApiKey == "YOUR-API-KEY-HERE")
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("YOU MUST SETUP YOUR BOT INFORMATION IN streamnesia/bot-config.json!");
@@ -59,25 +62,23 @@ namespace Streamnesia.Twitch
             client.OnJoinedChannel += Client_OnJoinedChannel;
             client.OnMessageReceived += Client_OnMessageReceived;
             client.OnWhisperReceived += Client_OnWhisperReceived;
-            client.OnNewSubscriber += Client_OnNewSubscriber;
-            client.OnConnected += Client_OnConnected;
 
             client.Connect();
         }
   
         private void Client_OnLog(object sender, OnLogArgs e)
         {
-            Console.WriteLine($"{e.DateTime.ToString()}: {e.BotUsername} - {e.Data}");
+            //Console.WriteLine($"{e.DateTime.ToString()}: {e.BotUsername} - {e.Data}");
         }
-  
-        private void Client_OnConnected(object sender, OnConnectedArgs e)
-        {
-            Console.WriteLine($"Connected to {e.AutoJoinChannel}");
-        }
-  
+
         private void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
-            client.SendMessage(e.Channel, "Streamnesia is up and running.");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("--------------------------------------");
+            Console.WriteLine("[LIVE] Streamnesia bot joined the Twitch channel.");
+            Console.WriteLine("--------------------------------------");
+            Console.ResetColor();
+            client.SendMessage(e.Channel, "PogChamp Streamnesia is up and running!");
         }
 
         private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
@@ -150,23 +151,26 @@ namespace Streamnesia.Twitch
 
                 OnVoted.Invoke(e.ChatMessage.DisplayName, payloadIndex);
             }
-            
+            else if (int.TryParse(e.ChatMessage.Message, out var chatMessageNumber))
+            {
+                OnVoted.Invoke(e.ChatMessage.DisplayName, chatMessageNumber);
+            }
         }
         
         private void Client_OnWhisperReceived(object sender, OnWhisperReceivedArgs e)
         {
-            Console.WriteLine(e.WhisperMessage.UserId);
+            if (e.WhisperMessage.UserId != DeveloperUserId)
+                return;
 
-            if (e.WhisperMessage.UserId == "my_friend")
-                client.SendWhisper(e.WhisperMessage.Username, "Hey! Whispers are so cool!!");
-        }
-        
-        private void Client_OnNewSubscriber(object sender, OnNewSubscriberArgs e)
-        {
-            if (e.Subscriber.SubscriptionPlan == SubscriptionPlan.Prime)
-                client.SendMessage(e.Channel, $"Welcome {e.Subscriber.DisplayName} to the substers! You just earned 500 points! So kind of you to use your Twitch Prime on this channel!");
-            else
-                client.SendMessage(e.Channel, $"Welcome {e.Subscriber.DisplayName} to the substers! You just earned 500 points!");
+            if (e.WhisperMessage.Message.StartsWith("!p"))
+            {
+                if (!int.TryParse(e.WhisperMessage.Message.Substring(2), out var index))
+                    return;
+
+                DevPayload.Invoke(index);
+            }
+
+            DevCommand?.Invoke(e.WhisperMessage.Message);
         }
     }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -11,70 +12,109 @@ namespace Streamnesia.CommandProcessing
     public class CommandQueue
     {
         private Queue<Payload> _payloadQueue = new Queue<Payload>();
-        private ICollection<PayloadAntidote> _antidoteQueue = new List<PayloadAntidote>();
+        private ICollection<PayloadExtension> _extensionQueue = new List<PayloadExtension>();
 
         public async Task StartCommandProcessingAsync(CancellationToken cancellationToken)
         {
-            while(!cancellationToken.IsCancellationRequested)
+            while (!cancellationToken.IsCancellationRequested)
             {
-                await ProcessCommandQueue();
-                await ProcessAntidoteQueue();
-                await Task.Delay(TimeSpan.FromSeconds(0.5), cancellationToken);
+                Log("[[[ QUEUE ]]] Begins");
+                try
+                {
+                    await ProcessCommandQueue();
+                    await ProcessExtensionQueue();
+                    await Task.Delay(TimeSpan.FromSeconds(0.5), cancellationToken);
+                }
+                catch (Exception e)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("The Queue itself threw");
+                    Console.WriteLine(e);
+                    Console.ResetColor();
+                }
             }
         }
 
         public Task AddPayloadAsync(Payload payload)
         {
-            _payloadQueue.Enqueue(payload);
+            Log("Trying to enqueue a thing");
+            try
+            {
+                _payloadQueue.Enqueue(payload);
+            }
+            catch (Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("_payloadQueue.Enqueue threw");
+                Console.WriteLine(e);
+                Console.ResetColor();
+            }
+
             return Task.CompletedTask;
         }
 
         private Task ProcessCommandQueue()
         {
-            if(_payloadQueue.Count == 0)
+            if (_payloadQueue.Count == 0)
+            {
                 return Task.CompletedTask;
-            
-            if(!Amnesia.LastInstructionWasExecuted())
+            }
+
+            if (!Amnesia.LastInstructionWasExecuted())
+            {
+                Log("[CmdQ] Gotta wait, Amnesia is behind...");
                 return Task.CompletedTask;
+            }
 
             var payload = _payloadQueue.Dequeue();
 
-            return ProcessPayload(payload);
+            ProcessPayload(payload);
+            return Task.CompletedTask;
         }
 
-        private async Task ProcessAntidoteQueue()
+        private static void Log(string message) { return; Console.WriteLine($"[D] {message}"); }
+
+        private async Task ProcessExtensionQueue()
         {
             if(!Amnesia.LastInstructionWasExecuted())
                 return;
             
-            PayloadAntidote antidote;
+            PayloadExtension extension;
 
-            for(var i = 0; i < _antidoteQueue.Count; i++)
+            for(var i = 0; i < _extensionQueue.Count; i++)
             {
-                antidote = _antidoteQueue.ElementAt(i);
-                if(DateTime.Now < antidote.ExecuteAfterDateTime)
+                extension = _extensionQueue.ElementAt(i);
+                if(DateTime.Now < extension.ExecuteAfterDateTime)
                     continue;
                 
-                await Amnesia.ExecuteAsync(antidote.Angelcode);
-                _antidoteQueue.Remove(antidote);
+                await Amnesia.ExecuteAsync(extension.Angelcode);
+                _extensionQueue.Remove(extension);
                 return;
             }
 
             return;
         }
 
-        private async Task ProcessPayload(Payload payload)
+        private void ProcessPayload(Payload payload)
         {
-            await Amnesia.ExecuteAsync(payload.Angelcode);
-
-            if(string.IsNullOrWhiteSpace(payload.ReverseAngelcode) || payload.PayloadDuration is null)
-                return;
-
-            _antidoteQueue.Add(new PayloadAntidote
+            foreach (var sequenceItem in payload.Sequence)
             {
-                Angelcode = payload.ReverseAngelcode,
-                ExecuteAfterDateTime = DateTime.Now.Add(payload.PayloadDuration.Value)
-            });
+                try
+                {
+                    _extensionQueue.Add(new PayloadExtension
+                    {
+                        Angelcode = sequenceItem.AngelCode,
+                        ExecuteAfterDateTime = DateTime.Now.Add(sequenceItem.Delay)
+                    });
+                }
+                catch(Exception e)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("_extensionQueue.Add threw");
+                    Console.WriteLine(e);
+                    Console.ResetColor();
+                }
+            }
         }
     }
 }

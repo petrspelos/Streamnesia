@@ -25,15 +25,67 @@ namespace Streamnesia.WebApp
         {
             var poll = new CommandPolling();
             IPayloadLoader payloadLoader = new LocalPayloadLoader();
-            
+
+
             CommandQueue cmdQueue = new CommandQueue();
             _ = cmdQueue.StartCommandProcessingAsync(CancellationToken.None);
 
             var payloads = await payloadLoader.GetPayloadsAsync();
             var bot = new Bot();
+            var isRapidMode = false;
+            var rng = new Random();
+
+            try
+            {
+                Console.WriteLine("Waiting for 5 seconds before payload emulation...");
+                await Task.Delay(TimeSpan.FromSeconds(5));
+
+                Action pAction = () =>
+                {
+                    cmdQueue.AddPayloadAsync(payloads.ElementAt(rng.Next(0, 66)));
+                };
+
+                for(var i = 0; i < 20; i++)
+                {
+                    Console.WriteLine("Executing MAIN PAYLOAD three times");
+                    Parallel.Invoke(pAction, pAction, pAction);
+                    await Task.Delay(100);
+                }
+
+                for(var i = 0; i < 100; i++)
+                {
+                    Console.WriteLine("Executing");
+                    Parallel.Invoke(pAction);
+                }
+
+                Console.WriteLine("Execution finished...");
+                await Task.Delay(-1);
+                return;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return;
+
             bot.OnVoted = (displayname, vote) => {
                 if(vote < 0)
                     return;
+
+                if(isRapidMode)
+                {
+                    try
+                    {
+                        var payload = poll.GetPayloadAt(vote);
+                        cmdQueue.AddPayloadAsync(payload);
+                        return;
+                    }
+                    catch(Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                }
 
                 poll.Vote(displayname, vote);
             };
@@ -42,6 +94,18 @@ namespace Streamnesia.WebApp
             };
             bot.OnMessageSent = text => {
                 Amnesia.DisplayTextAsync(text);
+            };
+            bot.DevCommand = cmd =>
+            {
+                Amnesia.ExecuteAsync(cmd);
+            };
+            bot.DevPayload = index =>
+            {
+                var payload = payloads.ElementAtOrDefault(index);
+                if (payload is null)
+                    return;
+
+                cmdQueue.AddPayloadAsync(payload);
             };
 
             var cooldown = true;
@@ -74,7 +138,17 @@ namespace Streamnesia.WebApp
                         cooldownEnd = null;
                         cooldown = false;
                         pollStartDateTime = DateTime.Now;
-                        pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(40));
+                        
+                        if(rng.Next(101) <= 10)
+                        {
+                            isRapidMode = true;
+                            pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(20));
+                        }
+                        else
+                        {
+                            isRapidMode = false;
+                            pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(40));
+                        }
 
                         poll.GeneratePoll(payloads);
                     }
@@ -87,7 +161,7 @@ namespace Streamnesia.WebApp
                 
                 if(per < 100.0)
                 {
-                    await SendCurrentStatusAsync(per, poll.GetPollOptions());
+                    await SendCurrentStatusAsync(per, poll.GetPollOptions(), isRapidMode);
                 }
                 else
                 {
@@ -100,15 +174,16 @@ namespace Streamnesia.WebApp
             }
         }
 
-        private async Task SendCurrentStatusAsync(double percentage, IEnumerable<PollOption> options)
+        private async Task SendCurrentStatusAsync(double percentage, IEnumerable<PollOption> options, bool isRapidMode)
         {
             await _hub.Clients.All.SendCoreAsync("UpdateTimePercentage", new object[] { new {
-                percentage = percentage,
+                percentage,
                 options = options.Select(p => new {
                     name = p.Name,
                     votes = p.Votes,
-                    description = $"!vote {p.Index}"
-                })
+                    description = $"Send <code>{p.Index}</code> in the chat to vote for:"
+                }),
+                rapidFire = isRapidMode
             } });
         }
 
@@ -116,7 +191,8 @@ namespace Streamnesia.WebApp
         {
             await _hub.Clients.All.SendCoreAsync("UpdateTimePercentage", new object[] { new {
                 percentage = 100.0,
-                options = new object[0]
+                options = new object[0],
+                rapidFire = false
             } });
         }
     }

@@ -51,6 +51,14 @@ namespace Streamnesia.CommandProcessing
             }
         }
 
+        public Payload GetPayloadAt(int vote)
+        {
+            if (vote < 0 || vote > 3)
+                return null;
+
+            return _options[vote];
+        }
+
         public Payload GetPayloadWithMostVotes()
         {
             if(!_votes.Any())
@@ -58,8 +66,12 @@ namespace Streamnesia.CommandProcessing
                 return _options.Random(_rng);
             }
 
-            var mostVotedIndex = GetMostVotedIndex();
-            return _options[mostVotedIndex];
+            var mostVotedIndexes = GetMostVotedIndexes();
+
+            if(mostVotedIndexes.Length == 1)
+                return _options[mostVotedIndexes[0]];
+
+            return _options[mostVotedIndexes.Random(_rng)];
         }
 
         public IEnumerable<PollOption> GetPollOptions()
@@ -72,8 +84,9 @@ namespace Streamnesia.CommandProcessing
             });
         }
 
-        private int GetMostVotedIndex()
+        private int[] GetMostVotedIndexes()
         {
+            var indexes = new List<int>();
             var votes = new int[_options.Count()];
             
             foreach(var vote in _votes)
@@ -85,14 +98,20 @@ namespace Streamnesia.CommandProcessing
             int index = 0;
             for(var i = 0; i < votes.Length; i++)
             {
+                if(votes[i] == mostVotes)
+                {
+                    indexes.Add(i);
+                }
                 if(votes[i] > mostVotes)
                 {
+                    indexes.Clear();
                     mostVotes = votes[i];
                     index = i;
+                    indexes.Add(i);
                 }
             }
 
-            return index;
+            return indexes.ToArray();
         }
     }
 

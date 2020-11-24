@@ -12,7 +12,7 @@ namespace Streamnesia.Payloads
     public class LocalPayloadLoader : IPayloadLoader
     {
         public string payloadsDirectory = "payloads";
-        
+
         public Task<IEnumerable<Payload>> GetPayloadsAsync()
         {
             var payloads = GetLocalPayloads();
@@ -34,10 +34,17 @@ namespace Streamnesia.Payloads
             return payloadDefinitions.Select(p => new Payload
             {
                 Name = p.Name,
-                Angelcode = GetPayloadFileText(p.File),
-                PayloadDuration = p.Duration,
-                ReverseAngelcode = GetPayloadFileText(p.Antidote)
+                Sequence = ToCoreEntity(p.Sequence)
             });
+        }
+
+        private SequenceItem[] ToCoreEntity(SequenceModel[] sequence)
+        {
+            return sequence.Select(i => new SequenceItem
+            {
+                AngelCode = GetPayloadFileText(i.File),
+                Delay = i.Delay
+            }).ToArray();
         }
 
         private static void UpdatePayloads()
