@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Streamnesia.Payloads;
@@ -8,24 +9,34 @@ namespace Streamnesia.CommandProcessing
     public class CommandPolling
     {
         private readonly Random _rng = new Random();
-        private Payload[] _options;
+        private ConcurrentDictionary<int, Payload>  _options;
         private Dictionary<string, int> _votes;
 
         public CommandPolling()
         {
-            _options = new Payload[4];
+            _options = new ConcurrentDictionary<int, Payload>();
+            
+            for(var i = 0; i < 4; i++)
+            {
+                var success = _options.TryAdd(i, null);
+                if(!success)
+                {
+                    Console.WriteLine("Initialization of poll items failed.");
+                }
+            }
+
             _votes = new Dictionary<string, int>();
         }
 
         public void GeneratePoll(IEnumerable<Payload> payloads)
         {
-            for(var i = 0; i < _options.Length; i++)
+            for(var i = 0; i < _options.Count; i++)
                 _options[i] = null;
 
             Payload candidate = payloads.Random(_rng);
-            for(var i = 0; i < _options.Length; i++)
+            for(var i = 0; i < _options.Count; i++)
             {
-                while(_options.Any(o => o != null && o.Name == candidate.Name))
+                while(_options.Any(o => o.Value != null && o.Value.Name == candidate.Name))
                 {
                     candidate = payloads.Random(_rng);
                 }
@@ -38,7 +49,7 @@ namespace Streamnesia.CommandProcessing
 
         public void Vote(string username, int vote)
         {
-            if(vote < 0 || vote >= _options.Length)
+            if(vote < 0 || vote >= _options.Count)
                 return;
 
             if(_votes.ContainsKey(username))
@@ -63,7 +74,7 @@ namespace Streamnesia.CommandProcessing
         {
             if(!_votes.Any())
             {
-                return _options.Random(_rng);
+                return _options.Random(_rng).Value;
             }
 
             var mostVotedIndexes = GetMostVotedIndexes();
@@ -78,7 +89,7 @@ namespace Streamnesia.CommandProcessing
         {
             return _options.Select((o, i) => new PollOption
             {
-                Name = o.Name,
+                Name = o.Value.Name,
                 Index = i,
                 Votes = _votes.Count(v => v.Value == i)
             });

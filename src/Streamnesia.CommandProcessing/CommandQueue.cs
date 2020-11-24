@@ -24,6 +24,12 @@ namespace Streamnesia.CommandProcessing
 
         public Task AddPayloadAsync(Payload payload)
         {
+            if(payload is null)
+            {
+                Console.WriteLine("A queued payload was null.");
+                return Task.CompletedTask;
+            }
+            
             _payloadQueue.Enqueue(payload);
             return Task.CompletedTask;
         }
@@ -36,12 +42,13 @@ namespace Streamnesia.CommandProcessing
             }
 
             if (!Amnesia.LastInstructionWasExecuted())
-            {
                 return Task.CompletedTask;
-            }
 
             if(_payloadQueue.TryDequeue(out var payload) == false)
+            {
+                Console.WriteLine("A dequeue of an instruction failed");
                 return Task.CompletedTask;
+            }
 
             ProcessPayload(payload);
             return Task.CompletedTask;
@@ -57,7 +64,10 @@ namespace Streamnesia.CommandProcessing
             for(var i = 0; i < _instructionStack.Count; i++)
             {
                 if(_instructionStack.TryPop(out extension) == false)
+                {
+                    Console.WriteLine("Failed to pop");
                     return;
+                }
 
                 if(DateTime.Now < extension.ExecuteAfterDateTime)
                 {
