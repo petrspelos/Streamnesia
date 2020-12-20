@@ -1,13 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Streamnesia.CommandProcessing;
+using Streamnesia.Payloads;
+using Streamnesia.Twitch;
 using Streamnesia.WebApp.Hubs;
 
 namespace Streamnesia.WebApp
@@ -26,6 +25,11 @@ namespace Streamnesia.WebApp
         {
             services.AddSingleton<UpdateHub>();
             services.AddSingleton<StreamnesiaHub>();
+            services.AddSingleton<Random>();
+            services.AddSingleton<CommandPolling>();
+            services.AddSingleton<CommandQueue>();
+            services.AddSingleton<IPayloadLoader, LocalPayloadLoader>();
+            services.AddSingleton<Bot>();
 
             services.AddControllersWithViews();
             services.AddSignalR();

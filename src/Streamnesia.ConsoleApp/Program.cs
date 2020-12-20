@@ -28,12 +28,12 @@ namespace Streamnesia.ConsoleApp
             else if(args.Any() && args[0] == "--bot")
             {
                 var bot = new Bot();
-                bot.OnCommandSelected = async index => {
+                bot.OnCommandSelected = index => {
                     if(index > 22 || index < 0)
                         return;
 
                     var p = payloads.ElementAt(index);
-                    await CommandQueue.AddPayloadAsync(p);
+                    CommandQueue.AddPayload(p);
                 };
                 bot.OnMessageSent = async msg => {
                     await Amnesia.DisplayTextAsync(msg);
@@ -44,7 +44,7 @@ namespace Streamnesia.ConsoleApp
             }
             else if(args.Length == 2 && args[0] == "--run")
             {
-                await CommandQueue.AddPayloadAsync(payloads.First(p => p.Name.Contains(args[1])));
+                CommandQueue.AddPayload(payloads.First(p => p.Name.Contains(args[1])));
             }
 
             for(var i = 0; i < payloads.Count(); i++)
@@ -66,7 +66,7 @@ namespace Streamnesia.ConsoleApp
                 await Task.Delay(interval);
                 var p = payloads.Random(Rng);
                 Console.WriteLine($"Running: {p.Name}");
-                await CommandQueue.AddPayloadAsync(p);
+                CommandQueue.AddPayload(p);
             }
         }
     }

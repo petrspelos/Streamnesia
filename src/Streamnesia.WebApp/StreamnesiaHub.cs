@@ -13,28 +13,41 @@ namespace Streamnesia.WebApp
 {
     public class StreamnesiaHub
     {
-        private IHubContext<UpdateHub> _hub;
+#region Dependencies & Constructors
+        private readonly IHubContext<UpdateHub> _hub;
+        private readonly CommandPolling _poll;
+        private readonly CommandQueue _cmdQueue;
+        private readonly IPayloadLoader _payloadLoader;
+        private readonly Bot _bot;
+        private readonly Random _rng;
 
-        public StreamnesiaHub(IHubContext<UpdateHub> hub)
+        public StreamnesiaHub(
+            IHubContext<UpdateHub> hub,
+            CommandPolling poll,
+            CommandQueue cmdQueue,
+            IPayloadLoader payloadLoader,
+            Bot bot,
+            Random rng
+        )
         {
             _hub = hub;
+            _poll = poll;
+            _cmdQueue = cmdQueue;
+            _payloadLoader = payloadLoader;
+            _bot = bot;
+            _rng = rng;
+
+            _ = _cmdQueue.StartCommandProcessingAsync(CancellationToken.None);
             _ = StartLoop();
         }
+#endregion
 
         public async Task StartLoop()
         {
-            var poll = new CommandPolling();
-            IPayloadLoader payloadLoader = new LocalPayloadLoader();
-
-            CommandQueue cmdQueue = new CommandQueue();
-            _ = cmdQueue.StartCommandProcessingAsync(CancellationToken.None);
-
-            var payloads = await payloadLoader.GetPayloadsAsync();
-            var bot = new Bot();
+            var payloads = await _payloadLoader.GetPayloadsAsync();
             var isRapidMode = false;
-            var rng = new Random();
 
-            bot.OnVoted = (displayname, vote) => {
+            _bot.OnVoted = (displayname, vote) => {
                 if(vote < 0)
                     return;
 
@@ -42,8 +55,8 @@ namespace Streamnesia.WebApp
                 {
                     try
                     {
-                        var payload = poll.GetPayloadAt(vote);
-                        cmdQueue.AddPayloadAsync(payload);
+                        var payload = _poll.GetPayloadAt(vote);
+                        _cmdQueue.AddPayload(payload);
                         return;
                     }
                     catch(Exception e)
@@ -52,25 +65,25 @@ namespace Streamnesia.WebApp
                     }
                 }
 
-                poll.Vote(displayname, vote);
+                _poll.Vote(displayname, vote);
             };
-            bot.OnDeathSet = text => {
+            _bot.OnDeathSet = text => {
                 Amnesia.SetDeathHintTextAsync(text);
             };
-            bot.OnMessageSent = text => {
+            _bot.OnMessageSent = text => {
                 Amnesia.DisplayTextAsync(text);
             };
-            bot.DevCommand = cmd =>
+            _bot.DevCommand = cmd =>
             {
                 Amnesia.ExecuteAsync(cmd);
             };
-            bot.DevPayload = index =>
+            _bot.DevPayload = index =>
             {
                 var payload = payloads.ElementAtOrDefault(index);
                 if (payload is null)
                     return;
 
-                cmdQueue.AddPayloadAsync(payload);
+                _cmdQueue.AddPayload(payload);
             };
 
             var cooldown = true;
@@ -104,7 +117,7 @@ namespace Streamnesia.WebApp
                         cooldown = false;
                         pollStartDateTime = DateTime.Now;
                         
-                        if(rng.Next(101) <= 10)
+                        if(_rng.Next(101) <= 10)
                         {
                             isRapidMode = true;
                             pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(20));
@@ -115,7 +128,7 @@ namespace Streamnesia.WebApp
                             pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(40));
                         }
 
-                        poll.GeneratePoll(payloads);
+                        _poll.GeneratePoll(payloads);
                     }
                 }
 
@@ -126,13 +139,13 @@ namespace Streamnesia.WebApp
                 
                 if(per < 100.0)
                 {
-                    await SendCurrentStatusAsync(per, poll.GetPollOptions(), isRapidMode);
+                    await SendCurrentStatusAsync(per, _poll.GetPollOptions(), isRapidMode);
                 }
                 else
                 {
                     await SendClearStatusAsync();
-                    var payload = poll.GetPayloadWithMostVotes();
-                    await cmdQueue.AddPayloadAsync(payload);
+                    var payload = _poll.GetPayloadWithMostVotes();
+                    _cmdQueue.AddPayload(payload);
 
                     cooldown = true;
                 }
