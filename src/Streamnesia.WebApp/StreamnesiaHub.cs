@@ -69,10 +69,10 @@ namespace Streamnesia.WebApp
 
         private async Task UpdatePollAsync()
         {
+            _pollState.StepForward();
+
             if(_pollState.Cooldown)
                 return;
-
-            _pollState.StepForward();
 
             if(_pollState.ShouldRegenerate)
                 _poll.GeneratePoll(_payloads);

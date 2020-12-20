@@ -1,4 +1,5 @@
 using System;
+using Streamnesia.CommandProcessing;
 
 namespace Streamnesia.WebApp
 {
@@ -26,6 +27,7 @@ namespace Streamnesia.WebApp
         internal void StepForward()
         {
             ShouldRegenerate = false;
+            PreventStacking();
 
             if(Cooldown)
             {
@@ -52,6 +54,12 @@ namespace Streamnesia.WebApp
 
                 ShouldRegenerate = true;
             }
+        }
+
+        private void PreventStacking()
+        {
+            if(!Amnesia.LastInstructionWasExecuted())
+                Cooldown = true;
         }
 
         private bool ShouldStartRapidfire() => IsRapidfire ? false : _rng.Next(101) <= RapidfireChancePrecent;
