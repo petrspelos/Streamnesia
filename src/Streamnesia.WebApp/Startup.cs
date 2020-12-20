@@ -30,6 +30,7 @@ namespace Streamnesia.WebApp
             services.AddSingleton<CommandQueue>();
             services.AddSingleton<IPayloadLoader, LocalPayloadLoader>();
             services.AddSingleton<Bot>();
+            services.AddSingleton<PollState>();
 
             services.AddControllersWithViews();
             services.AddSignalR();

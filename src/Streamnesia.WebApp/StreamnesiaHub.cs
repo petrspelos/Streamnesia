@@ -19,14 +19,9 @@ namespace Streamnesia.WebApp
         private readonly IPayloadLoader _payloadLoader;
         private readonly Bot _bot;
         private readonly Random _rng;
+        private readonly PollState _pollState;
 
-        private bool _isRapidFire;
         private IEnumerable<Payload> _payloads;
-        private bool _cooldown = true;
-        private DateTime? _cooldownEnd;
-        private DateTime _pollStartDateTime = DateTime.Now;
-        private DateTime _pollEndDateTime = DateTime.Now;
-        private double _rapidChance = 0.0;
 
         public StreamnesiaHub(
             IHubContext<UpdateHub> hub,
@@ -34,7 +29,8 @@ namespace Streamnesia.WebApp
             CommandQueue cmdQueue,
             IPayloadLoader payloadLoader,
             Bot bot,
-            Random rng
+            Random rng,
+            PollState pollState
         )
         {
             _hub = hub;
@@ -43,6 +39,7 @@ namespace Streamnesia.WebApp
             _payloadLoader = payloadLoader;
             _bot = bot;
             _rng = rng;
+            _pollState = pollState;
 
             _bot.OnVoted = OnUserVoted;
             _bot.OnDeathSet = text => {
@@ -72,65 +69,37 @@ namespace Streamnesia.WebApp
 
         private async Task UpdatePollAsync()
         {
-            if(_cooldown)
+            if(_pollState.Cooldown)
+                return;
+
+            _pollState.StepForward();
+
+            if(_pollState.ShouldRegenerate)
+                _poll.GeneratePoll(_payloads);
+
+            var progressPercentage = _pollState.GetProgressPercentage();
+
+            if(progressPercentage < 100.0)
             {
-                if(!_cooldownEnd.HasValue)
-                {
-                    _cooldownEnd = DateTime.Now.Add(TimeSpan.FromSeconds(5));
-                }
-
-                if(DateTime.Now < _cooldownEnd)
-                {
-                    // maybe push an update about how long until
-                    // cooldown ends
-                    return;
-                }
-                else
-                {
-                    _cooldownEnd = null;
-                    _cooldown = false;
-                    _pollStartDateTime = DateTime.Now;
-                    
-                    if(_rng.Next(101) <= 10)
-                    {
-                        _isRapidFire = true;
-                        _pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(20));
-                    }
-                    else
-                    {
-                        _isRapidFire = false;
-                        _pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(40));
-                    }
-
-                    _poll.GeneratePoll(_payloads);
-                }
-            }
-
-            var max = (_pollEndDateTime - _pollStartDateTime).TotalSeconds;
-            var current = (DateTime.Now - _pollStartDateTime).TotalSeconds;
-
-            _rapidChance = (current / max) * 100.0;
-            
-            if(_rapidChance < 100.0)
-            {
-                await SendCurrentStatusAsync(_rapidChance, _poll.GetPollOptions(), _isRapidFire);
+                await SendCurrentStatusAsync(progressPercentage, _poll.GetPollOptions(), _pollState.IsRapidfire);
             }
             else
             {
                 await SendClearStatusAsync();
+
                 var payload = _poll.GetPayloadWithMostVotes();
                 _cmdQueue.AddPayload(payload);
 
-                _cooldown = true;
+                _pollState.Cooldown = true;
             }
         }
 
         private void OnUserVoted(string displayname, int vote)
         {
             if(vote < 0)
-                    return;
+                return;
 
-            if(_isRapidFire)
+            if(_pollState.IsRapidfire)
             {
                 try
                 {
