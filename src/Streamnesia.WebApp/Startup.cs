@@ -1,9 +1,11 @@
 using System;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using Streamnesia.CommandProcessing;
 using Streamnesia.Payloads;
 using Streamnesia.Twitch;
@@ -13,6 +15,8 @@ namespace Streamnesia.WebApp
 {
     public class Startup
     {
+        private const string StreamnesiaConfigFile = "streamnesia-config.json";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -23,6 +27,8 @@ namespace Streamnesia.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<StreamnesiaConfig>(p => GetStreamnesiaConfig());
+
             services.AddSingleton<UpdateHub>();
             services.AddSingleton<StreamnesiaHub>();
             services.AddSingleton<Random>();
@@ -34,6 +40,18 @@ namespace Streamnesia.WebApp
 
             services.AddControllersWithViews();
             services.AddSignalR();
+        }
+
+        private StreamnesiaConfig GetStreamnesiaConfig()
+        {
+            if(!File.Exists(StreamnesiaConfigFile))
+            {
+                var config = new StreamnesiaConfig();
+                File.WriteAllText(StreamnesiaConfigFile, JsonConvert.SerializeObject(config, Formatting.Indented));
+                return config;
+            }
+
+            return JsonConvert.DeserializeObject<StreamnesiaConfig>(File.ReadAllText(StreamnesiaConfigFile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

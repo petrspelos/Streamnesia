@@ -11,7 +11,14 @@ namespace Streamnesia.Payloads
 {
     public class LocalPayloadLoader : IPayloadLoader
     {
-        public string payloadsDirectory = "payloads";
+        private const string PayloadsDirectory = "payloads";
+        
+        private readonly StreamnesiaConfig _config;
+
+        public LocalPayloadLoader(StreamnesiaConfig config)
+        {
+            _config = config;
+        }
 
         public Task<IEnumerable<Payload>> GetPayloadsAsync()
         {
@@ -22,14 +29,25 @@ namespace Streamnesia.Payloads
 
         private IEnumerable<Payload> GetLocalPayloads()
         {
-            if(HasInternetConnection())
+            if(_config.DownloadLatestPayloads && HasInternetConnection())
             {
                 System.Console.WriteLine("Downloading payloads...");
                 UpdatePayloads();
             }
 
-            var json = File.ReadAllText(Path.Combine(payloadsDirectory, "payloads.json"));
-            var payloadDefinitions = JsonConvert.DeserializeObject<IEnumerable<PayloadModel>>(json);
+            IEnumerable<PayloadModel> payloadDefinitions = new PayloadModel[0];
+
+            if(_config.UseVanillaPayloads)
+            {
+                var json = File.ReadAllText(Path.Combine(PayloadsDirectory, "payloads.json"));
+                payloadDefinitions = JsonConvert.DeserializeObject<IEnumerable<PayloadModel>>(json);
+            }
+
+            if(File.Exists(_config.CustomPayloadsFile))
+            {
+                var customPayloads = JsonConvert.DeserializeObject<IEnumerable<PayloadModel>>(_config.CustomPayloadsFile);
+                payloadDefinitions.Concat(customPayloads);
+            }
 
             return payloadDefinitions.Select(p => new Payload
             {
@@ -127,7 +145,7 @@ namespace Streamnesia.Payloads
             if(file is null)
                 return null;
 
-            return File.ReadAllText(Path.Combine(payloadsDirectory, file));
+            return File.ReadAllText(Path.Combine(PayloadsDirectory, file));
         }
 
         private string FormatPayloadName(string name)

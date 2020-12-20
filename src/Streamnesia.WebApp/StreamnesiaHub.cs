@@ -30,7 +30,8 @@ namespace Streamnesia.WebApp
             IPayloadLoader payloadLoader,
             Bot bot,
             Random rng,
-            PollState pollState
+            PollState pollState,
+            StreamnesiaConfig config
         )
         {
             _hub = hub;
@@ -43,10 +44,12 @@ namespace Streamnesia.WebApp
 
             _bot.OnVoted = OnUserVoted;
             _bot.OnDeathSet = text => {
-                Amnesia.SetDeathHintTextAsync(text);
+                if(config.AllowDeathMessages)
+                    Amnesia.SetDeathHintTextAsync(text);
             };
             _bot.OnMessageSent = text => {
-                Amnesia.DisplayTextAsync(text);
+                if(config.AllowOnScreenMessages)
+                    Amnesia.DisplayTextAsync(text);
             };
 
             _ = _cmdQueue.StartCommandProcessingAsync(CancellationToken.None);

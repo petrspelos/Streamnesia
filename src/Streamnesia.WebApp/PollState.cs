@@ -1,14 +1,15 @@
 using System;
 using Streamnesia.CommandProcessing;
+using Streamnesia.Payloads;
 
 namespace Streamnesia.WebApp
 {
     public class PollState
     {
-        private const double CooldownDurationInSeconds = 5.0;
-        private const double RapidfireDurationInSeconds = 20.0;
-        private const double VotingDurationInSeconds = 40.0;
-        private const int RapidfireChancePrecent = 10;
+        private double _cooldownDurationInSeconds = 5.0;
+        private double _rapidfireDurationInSeconds = 20.0;
+        private double _votingDurationInSeconds = 40.0;
+        private int _rapidfireChancePrecent = 10;
 
         private readonly Random _rng;
 
@@ -19,9 +20,13 @@ namespace Streamnesia.WebApp
         private DateTime _pollStartDateTime = DateTime.Now;
         private DateTime _pollEndDateTime = DateTime.Now;
 
-        public PollState(Random rng)
+        public PollState(Random rng, StreamnesiaConfig config)
         {
             _rng = rng;
+            _cooldownDurationInSeconds = config.CooldownDurationInSeconds;
+            _rapidfireDurationInSeconds = config.RapidfireDurationInSeconds;
+            _votingDurationInSeconds = config.VotingDurationInSeconds;
+            _rapidfireChancePrecent = config.RapidFireChancePercent;
         }
 
         internal void StepForward()
@@ -32,7 +37,7 @@ namespace Streamnesia.WebApp
             if(Cooldown)
             {
                 if(!_cooldownEnd.HasValue)
-                    _cooldownEnd = DateTime.Now.Add(TimeSpan.FromSeconds(CooldownDurationInSeconds));
+                    _cooldownEnd = DateTime.Now.Add(TimeSpan.FromSeconds(_cooldownDurationInSeconds));
 
                 if(DateTime.Now < _cooldownEnd)
                     return;
@@ -44,12 +49,12 @@ namespace Streamnesia.WebApp
                 if(ShouldStartRapidfire())
                 {
                     IsRapidfire = true;
-                    _pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(RapidfireDurationInSeconds));
+                    _pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(_rapidfireDurationInSeconds));
                 }
                 else
                 {
                     IsRapidfire = false;
-                    _pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(VotingDurationInSeconds));
+                    _pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(_votingDurationInSeconds));
                 }
 
                 ShouldRegenerate = true;
@@ -62,7 +67,7 @@ namespace Streamnesia.WebApp
                 Cooldown = true;
         }
 
-        private bool ShouldStartRapidfire() => IsRapidfire ? false : _rng.Next(101) <= RapidfireChancePrecent;
+        private bool ShouldStartRapidfire() => IsRapidfire ? false : _rng.Next(101) <= _rapidfireChancePrecent;
 
         internal double GetProgressPercentage()
         {

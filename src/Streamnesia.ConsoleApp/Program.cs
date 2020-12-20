@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
 using Streamnesia.Twitch;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace Streamnesia.ConsoleApp
 {
@@ -16,7 +18,9 @@ namespace Streamnesia.ConsoleApp
 
         static async Task Main(string[] args)
         {
-            IPayloadLoader payloadLoader = new LocalPayloadLoader();
+            var config = JsonConvert.DeserializeObject<StreamnesiaConfig>(File.ReadAllText("streamnesia-config.json"));
+
+            IPayloadLoader payloadLoader = new LocalPayloadLoader(config);
             var payloads = await payloadLoader.GetPayloadsAsync();
 
             _ = CommandQueue.StartCommandProcessingAsync(CancellationToken.None);
