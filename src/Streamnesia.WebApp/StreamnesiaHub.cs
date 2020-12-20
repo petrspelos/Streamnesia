@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
@@ -19,6 +18,7 @@ namespace Streamnesia.WebApp
         public StreamnesiaHub(IHubContext<UpdateHub> hub)
         {
             _hub = hub;
+            _ = StartLoop();
         }
 
         public async Task StartLoop()

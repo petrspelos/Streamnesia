@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Streamnesia.WebApp.Models;
@@ -18,7 +14,6 @@ namespace Streamnesia.WebApp.Controllers
         {
             _hub = hub;
             _logger = logger;
-            _ = _hub.StartLoop();
         }
 
         public IActionResult Index()
