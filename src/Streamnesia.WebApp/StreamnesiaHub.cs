@@ -13,13 +13,20 @@ namespace Streamnesia.WebApp
 {
     public class StreamnesiaHub
     {
-#region Dependencies & Constructors
         private readonly IHubContext<UpdateHub> _hub;
         private readonly CommandPolling _poll;
         private readonly CommandQueue _cmdQueue;
         private readonly IPayloadLoader _payloadLoader;
         private readonly Bot _bot;
         private readonly Random _rng;
+
+        private bool _isRapidFire;
+        private IEnumerable<Payload> _payloads;
+        private bool _cooldown = true;
+        private DateTime? _cooldownEnd;
+        private DateTime _pollStartDateTime = DateTime.Now;
+        private DateTime _pollEndDateTime = DateTime.Now;
+        private double _rapidChance = 0.0;
 
         public StreamnesiaHub(
             IHubContext<UpdateHub> hub,
@@ -37,119 +44,107 @@ namespace Streamnesia.WebApp
             _bot = bot;
             _rng = rng;
 
-            _ = _cmdQueue.StartCommandProcessingAsync(CancellationToken.None);
-            _ = StartLoop();
-        }
-#endregion
-
-        public async Task StartLoop()
-        {
-            var payloads = await _payloadLoader.GetPayloadsAsync();
-            var isRapidMode = false;
-
-            _bot.OnVoted = (displayname, vote) => {
-                if(vote < 0)
-                    return;
-
-                if(isRapidMode)
-                {
-                    try
-                    {
-                        var payload = _poll.GetPayloadAt(vote);
-                        _cmdQueue.AddPayload(payload);
-                        return;
-                    }
-                    catch(Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
-                }
-
-                _poll.Vote(displayname, vote);
-            };
+            _bot.OnVoted = OnUserVoted;
             _bot.OnDeathSet = text => {
                 Amnesia.SetDeathHintTextAsync(text);
             };
             _bot.OnMessageSent = text => {
                 Amnesia.DisplayTextAsync(text);
             };
-            _bot.DevCommand = cmd =>
-            {
+            _bot.DevCommand = cmd => {
                 Amnesia.ExecuteAsync(cmd);
             };
-            _bot.DevPayload = index =>
-            {
-                var payload = payloads.ElementAtOrDefault(index);
-                if (payload is null)
-                    return;
 
-                _cmdQueue.AddPayload(payload);
-            };
+            _ = _cmdQueue.StartCommandProcessingAsync(CancellationToken.None);
+            _ = StartLoop();
+        }
 
-            var cooldown = true;
-            DateTime? cooldownEnd = null;
-
-            var pollStartDateTime = DateTime.Now;
-            var pollEndDateTime = DateTime.Now;
-
-            var per = 0.0;
+        public async Task StartLoop()
+        {
+            _payloads = await _payloadLoader.GetPayloadsAsync();
 
             while(true)
             {
                 await Task.Delay(TimeSpan.FromSeconds(1));
+                await UpdatePollAsync();
+            }
+        }
 
-                if(cooldown)
+        private async Task UpdatePollAsync()
+        {
+            if(_cooldown)
+            {
+                if(!_cooldownEnd.HasValue)
                 {
-                    if(!cooldownEnd.HasValue)
-                    {
-                        cooldownEnd = DateTime.Now.Add(TimeSpan.FromSeconds(5));
-                    }
-
-                    if(DateTime.Now < cooldownEnd)
-                    {
-                        // maybe push an update about how long until
-                        // cooldown ends
-                        continue;
-                    }
-                    else
-                    {
-                        cooldownEnd = null;
-                        cooldown = false;
-                        pollStartDateTime = DateTime.Now;
-                        
-                        if(_rng.Next(101) <= 10)
-                        {
-                            isRapidMode = true;
-                            pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(20));
-                        }
-                        else
-                        {
-                            isRapidMode = false;
-                            pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(40));
-                        }
-
-                        _poll.GeneratePoll(payloads);
-                    }
+                    _cooldownEnd = DateTime.Now.Add(TimeSpan.FromSeconds(5));
                 }
 
-                var max = (pollEndDateTime - pollStartDateTime).TotalSeconds;
-                var current = (DateTime.Now - pollStartDateTime).TotalSeconds;
-
-                per = (current / max) * 100.0;
-                
-                if(per < 100.0)
+                if(DateTime.Now < _cooldownEnd)
                 {
-                    await SendCurrentStatusAsync(per, _poll.GetPollOptions(), isRapidMode);
+                    // maybe push an update about how long until
+                    // cooldown ends
+                    return;
                 }
                 else
                 {
-                    await SendClearStatusAsync();
-                    var payload = _poll.GetPayloadWithMostVotes();
-                    _cmdQueue.AddPayload(payload);
+                    _cooldownEnd = null;
+                    _cooldown = false;
+                    _pollStartDateTime = DateTime.Now;
+                    
+                    if(_rng.Next(101) <= 10)
+                    {
+                        _isRapidFire = true;
+                        _pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(20));
+                    }
+                    else
+                    {
+                        _isRapidFire = false;
+                        _pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(40));
+                    }
 
-                    cooldown = true;
+                    _poll.GeneratePoll(_payloads);
                 }
             }
+
+            var max = (_pollEndDateTime - _pollStartDateTime).TotalSeconds;
+            var current = (DateTime.Now - _pollStartDateTime).TotalSeconds;
+
+            _rapidChance = (current / max) * 100.0;
+            
+            if(_rapidChance < 100.0)
+            {
+                await SendCurrentStatusAsync(_rapidChance, _poll.GetPollOptions(), _isRapidFire);
+            }
+            else
+            {
+                await SendClearStatusAsync();
+                var payload = _poll.GetPayloadWithMostVotes();
+                _cmdQueue.AddPayload(payload);
+
+                _cooldown = true;
+            }
+        }
+
+        private void OnUserVoted(string displayname, int vote)
+        {
+            if(vote < 0)
+                    return;
+
+            if(_isRapidFire)
+            {
+                try
+                {
+                    var payload = _poll.GetPayloadAt(vote);
+                    _cmdQueue.AddPayload(payload);
+                    return;
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+
+            _poll.Vote(displayname, vote);
         }
 
         private async Task SendCurrentStatusAsync(double percentage, IEnumerable<PollOption> options, bool isRapidMode)
