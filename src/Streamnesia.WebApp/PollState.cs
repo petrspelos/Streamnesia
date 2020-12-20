@@ -32,8 +32,7 @@ namespace Streamnesia.WebApp
         internal void StepForward()
         {
             ShouldRegenerate = false;
-            PreventStacking();
-
+            
             if(Cooldown)
             {
                 if(!_cooldownEnd.HasValue)
@@ -42,11 +41,15 @@ namespace Streamnesia.WebApp
                 if(DateTime.Now < _cooldownEnd)
                     return;
                 
+                if (PreventStacking())
+                    return;
+
                 _cooldownEnd = null;
                 Cooldown = false;
                 _pollStartDateTime = DateTime.Now;
 
-                if(ShouldStartRapidfire())
+
+                if (ShouldStartRapidfire())
                 {
                     IsRapidfire = true;
                     _pollEndDateTime = DateTime.Now.Add(TimeSpan.FromSeconds(_rapidfireDurationInSeconds));
@@ -61,13 +64,19 @@ namespace Streamnesia.WebApp
             }
         }
 
-        private void PreventStacking()
+        private bool PreventStacking()
         {
             if(!Amnesia.LastInstructionWasExecuted())
+            {
                 Cooldown = true;
+                _cooldownEnd = DateTime.Now.Add(TimeSpan.FromSeconds(1));
+                return true;
+            }
+
+            return false;
         }
 
-        private bool ShouldStartRapidfire() => IsRapidfire ? false : _rng.Next(101) <= _rapidfireChancePrecent;
+        private bool ShouldStartRapidfire() => IsRapidfire || _rapidfireChancePrecent == 0 ? false : _rng.Next(100) + 1 <= _rapidfireChancePrecent;
 
         internal double GetProgressPercentage()
         {

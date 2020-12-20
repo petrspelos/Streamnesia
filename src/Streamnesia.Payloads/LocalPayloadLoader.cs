@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -35,18 +36,41 @@ namespace Streamnesia.Payloads
                 UpdatePayloads();
             }
 
-            IEnumerable<PayloadModel> payloadDefinitions = new PayloadModel[0];
+            IEnumerable<PayloadModel> payloadDefinitions = new List<PayloadModel>();
 
             if(_config.UseVanillaPayloads)
             {
+                if(!Directory.Exists(PayloadsDirectory))
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("(!) The default payload directory does not exist (!)");
+                    Console.WriteLine("Make sure to enable payload downloads for Streamnesia to auto-fix this issue.");
+                    Console.ResetColor();
+                    Console.WriteLine("Press any key to exit...");
+                    Console.ReadKey();
+                    Environment.Exit(0);
+                }
+
                 var json = File.ReadAllText(Path.Combine(PayloadsDirectory, "payloads.json"));
                 payloadDefinitions = JsonConvert.DeserializeObject<IEnumerable<PayloadModel>>(json);
             }
 
             if(File.Exists(_config.CustomPayloadsFile))
             {
-                var customPayloads = JsonConvert.DeserializeObject<IEnumerable<PayloadModel>>(_config.CustomPayloadsFile);
-                payloadDefinitions.Concat(customPayloads);
+                var customPayloads = JsonConvert.DeserializeObject<IEnumerable<PayloadModel>>(File.ReadAllText(_config.CustomPayloadsFile));
+                payloadDefinitions = payloadDefinitions.Concat(customPayloads);
+            }
+
+            if(payloadDefinitions.Count() == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("(!) There are no payloads (!)");
+                Console.WriteLine("You can enable vanilla payloads and payload downloads in the config.");
+                Console.WriteLine("Or you can define your own payloads.\n\n");
+                Console.ResetColor();
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+                Environment.Exit(0);
             }
 
             return payloadDefinitions.Select(p => new Payload
