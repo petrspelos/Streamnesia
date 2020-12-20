@@ -48,9 +48,6 @@ namespace Streamnesia.WebApp
             _bot.OnMessageSent = text => {
                 Amnesia.DisplayTextAsync(text);
             };
-            _bot.DevCommand = cmd => {
-                Amnesia.ExecuteAsync(cmd);
-            };
 
             _ = _cmdQueue.StartCommandProcessingAsync(CancellationToken.None);
             _ = StartLoop();

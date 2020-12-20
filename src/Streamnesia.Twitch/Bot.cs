@@ -2,7 +2,6 @@
 using System.IO;
 using System.Collections.Generic;
 using TwitchLib.Client;
-using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Clients;
@@ -19,13 +18,10 @@ namespace Streamnesia.Twitch
         public Action<string> OnMessageSent;
         public Action<string, int> OnVoted;
         public Action<string> OnDeathSet;
-        public Action<int> DevPayload;
-        public Action<string> DevCommand;
 	
         Dictionary<string, DateTime> CooldownTable;
 
         private const string BotConfigFile = "bot-config.json";
-        private const string DeveloperUserId = "24577783";
 
         public Bot()
         {
@@ -59,17 +55,10 @@ namespace Streamnesia.Twitch
             client = new TwitchClient(customClient);
             client.Initialize(credentials, config.TwitchChannelName);
 
-            client.OnLog += Client_OnLog;
             client.OnJoinedChannel += Client_OnJoinedChannel;
             client.OnMessageReceived += Client_OnMessageReceived;
-            client.OnWhisperReceived += Client_OnWhisperReceived;
 
             client.Connect();
-        }
-  
-        private void Client_OnLog(object sender, OnLogArgs e)
-        {
-            //Console.WriteLine($"{e.DateTime.ToString()}: {e.BotUsername} - {e.Data}");
         }
 
         private void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
@@ -156,22 +145,6 @@ namespace Streamnesia.Twitch
             {
                 OnVoted.Invoke(e.ChatMessage.DisplayName, chatMessageNumber);
             }
-        }
-        
-        private void Client_OnWhisperReceived(object sender, OnWhisperReceivedArgs e)
-        {
-            if (e.WhisperMessage.UserId != DeveloperUserId)
-                return;
-
-            if (e.WhisperMessage.Message.StartsWith("!p"))
-            {
-                if (!int.TryParse(e.WhisperMessage.Message.Substring(2), out var index))
-                    return;
-
-                DevPayload.Invoke(index);
-            }
-
-            DevCommand?.Invoke(e.WhisperMessage.Message);
         }
     }
 
