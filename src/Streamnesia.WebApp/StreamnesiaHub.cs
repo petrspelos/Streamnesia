@@ -84,8 +84,11 @@ namespace Streamnesia.WebApp
             {
                 await SendClearStatusAsync();
 
-                var payload = _poll.GetPayloadWithMostVotes();
-                _cmdQueue.AddPayload(payload);
+                if(!_pollState.IsRapidfire)
+                {
+                    var payload = _poll.GetPayloadWithMostVotes();
+                    _cmdQueue.AddPayload(payload);
+                }
 
                 _pollState.Cooldown = true;
             }
