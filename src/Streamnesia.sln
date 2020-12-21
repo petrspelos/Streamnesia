@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Streamnesia.Twitch", "Strea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Streamnesia.WebApp", "Streamnesia.WebApp\Streamnesia.WebApp.csproj", "{1FB61C6E-E267-4690-A98B-5801DCD67489}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Streamnesia.Tests", "Streamnesia.Tests\Streamnesia.Tests.csproj", "{2B73CC19-614B-4B62-A956-FF2697A8B68A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,5 +88,17 @@ Global
 		{1FB61C6E-E267-4690-A98B-5801DCD67489}.Release|x64.Build.0 = Release|Any CPU
 		{1FB61C6E-E267-4690-A98B-5801DCD67489}.Release|x86.ActiveCfg = Release|Any CPU
 		{1FB61C6E-E267-4690-A98B-5801DCD67489}.Release|x86.Build.0 = Release|Any CPU
+		{2B73CC19-614B-4B62-A956-FF2697A8B68A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B73CC19-614B-4B62-A956-FF2697A8B68A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B73CC19-614B-4B62-A956-FF2697A8B68A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2B73CC19-614B-4B62-A956-FF2697A8B68A}.Debug|x64.Build.0 = Debug|Any CPU
+		{2B73CC19-614B-4B62-A956-FF2697A8B68A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2B73CC19-614B-4B62-A956-FF2697A8B68A}.Debug|x86.Build.0 = Debug|Any CPU
+		{2B73CC19-614B-4B62-A956-FF2697A8B68A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B73CC19-614B-4B62-A956-FF2697A8B68A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B73CC19-614B-4B62-A956-FF2697A8B68A}.Release|x64.ActiveCfg = Release|Any CPU
+		{2B73CC19-614B-4B62-A956-FF2697A8B68A}.Release|x64.Build.0 = Release|Any CPU
+		{2B73CC19-614B-4B62-A956-FF2697A8B68A}.Release|x86.ActiveCfg = Release|Any CPU
+		{2B73CC19-614B-4B62-A956-FF2697A8B68A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

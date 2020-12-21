@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -11,7 +12,14 @@ namespace Streamnesia.Payloads
 {
     public class LocalPayloadLoader : IPayloadLoader
     {
-        public string payloadsDirectory = "payloads";
+        private const string PayloadsDirectory = "payloads";
+        
+        private readonly StreamnesiaConfig _config;
+
+        public LocalPayloadLoader(StreamnesiaConfig config)
+        {
+            _config = config;
+        }
 
         public Task<IEnumerable<Payload>> GetPayloadsAsync()
         {
@@ -22,14 +30,48 @@ namespace Streamnesia.Payloads
 
         private IEnumerable<Payload> GetLocalPayloads()
         {
-            if(HasInternetConnection())
+            if(_config.DownloadLatestPayloads && HasInternetConnection())
             {
                 System.Console.WriteLine("Downloading payloads...");
                 UpdatePayloads();
             }
 
-            var json = File.ReadAllText(Path.Combine(payloadsDirectory, "payloads.json"));
-            var payloadDefinitions = JsonConvert.DeserializeObject<IEnumerable<PayloadModel>>(json);
+            IEnumerable<PayloadModel> payloadDefinitions = new List<PayloadModel>();
+
+            if(_config.UseVanillaPayloads)
+            {
+                if(!Directory.Exists(PayloadsDirectory))
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("(!) The default payload directory does not exist (!)");
+                    Console.WriteLine("Make sure to enable payload downloads for Streamnesia to auto-fix this issue.");
+                    Console.ResetColor();
+                    Console.WriteLine("Press any key to exit...");
+                    Console.ReadKey();
+                    Environment.Exit(0);
+                }
+
+                var json = File.ReadAllText(Path.Combine(PayloadsDirectory, "payloads.json"));
+                payloadDefinitions = JsonConvert.DeserializeObject<IEnumerable<PayloadModel>>(json);
+            }
+
+            if(File.Exists(_config.CustomPayloadsFile))
+            {
+                var customPayloads = JsonConvert.DeserializeObject<IEnumerable<PayloadModel>>(File.ReadAllText(_config.CustomPayloadsFile));
+                payloadDefinitions = payloadDefinitions.Concat(customPayloads);
+            }
+
+            if(payloadDefinitions.Count() == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("(!) There are no payloads (!)");
+                Console.WriteLine("You can enable vanilla payloads and payload downloads in the config.");
+                Console.WriteLine("Or you can define your own payloads.\n\n");
+                Console.ResetColor();
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+                Environment.Exit(0);
+            }
 
             return payloadDefinitions.Select(p => new Payload
             {
@@ -127,7 +169,7 @@ namespace Streamnesia.Payloads
             if(file is null)
                 return null;
 
-            return File.ReadAllText(Path.Combine(payloadsDirectory, file));
+            return File.ReadAllText(Path.Combine(PayloadsDirectory, file));
         }
 
         private string FormatPayloadName(string name)
