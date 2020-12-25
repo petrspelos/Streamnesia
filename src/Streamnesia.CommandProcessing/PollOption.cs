@@ -1,6 +1,6 @@
 namespace Streamnesia.CommandProcessing
 {
-    public class PollOption
+    public struct PollOption
     {
         public string Name { get; set; }
         public int Votes { get; set; }

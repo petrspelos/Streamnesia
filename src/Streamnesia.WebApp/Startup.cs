@@ -27,12 +27,12 @@ namespace Streamnesia.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<StreamnesiaConfig>(p => GetStreamnesiaConfig());
+            services.AddSingleton(p => GetStreamnesiaConfig());
 
             services.AddSingleton<UpdateHub>();
             services.AddSingleton<StreamnesiaHub>();
             services.AddSingleton<Random>();
-            services.AddSingleton<CommandPolling>();
+            services.AddSingleton<ICommandPoll, CommandPoll>();
             services.AddSingleton<CommandQueue>();
             services.AddSingleton<IPayloadLoader, LocalPayloadLoader>();
             services.AddSingleton<Bot>();

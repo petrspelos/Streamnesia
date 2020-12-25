@@ -14,7 +14,7 @@ namespace Streamnesia.WebApp
     public class StreamnesiaHub
     {
         private readonly IHubContext<UpdateHub> _hub;
-        private readonly CommandPolling _poll;
+        private readonly ICommandPoll _poll;
         private readonly CommandQueue _cmdQueue;
         private readonly IPayloadLoader _payloadLoader;
         private readonly Bot _bot;
@@ -22,10 +22,11 @@ namespace Streamnesia.WebApp
         private readonly PollState _pollState;
 
         private IEnumerable<Payload> _payloads;
+        private bool _canQueryPoll;
 
         public StreamnesiaHub(
             IHubContext<UpdateHub> hub,
-            CommandPolling poll,
+            ICommandPoll poll,
             CommandQueue cmdQueue,
             IPayloadLoader payloadLoader,
             Bot bot,
@@ -41,6 +42,8 @@ namespace Streamnesia.WebApp
             _bot = bot;
             _rng = rng;
             _pollState = pollState;
+
+            _canQueryPoll = true;
 
             _bot.OnVoted = OnUserVoted;
             _bot.OnDeathSet = text => {
@@ -59,6 +62,7 @@ namespace Streamnesia.WebApp
         public async Task StartLoop()
         {
             _payloads = await _payloadLoader.GetPayloadsAsync();
+            _poll.SetPayloadSource(_payloads);
 
             while(true)
             {
@@ -75,7 +79,11 @@ namespace Streamnesia.WebApp
                 return;
 
             if(_pollState.ShouldRegenerate)
-                _poll.GeneratePoll(_payloads);
+            {
+                _canQueryPoll = false;
+                _poll.GenerateNew();
+                _canQueryPoll = true;
+            }
 
             var progressPercentage = _pollState.GetProgressPercentage();
 
@@ -99,6 +107,9 @@ namespace Streamnesia.WebApp
 
         private void OnUserVoted(string displayname, int vote)
         {
+            if (!_canQueryPoll)
+                return;
+
             vote--; // From label to index
 
             if(vote < 0)
