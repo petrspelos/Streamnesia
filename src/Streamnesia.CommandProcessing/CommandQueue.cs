@@ -24,9 +24,10 @@ namespace Streamnesia.CommandProcessing
 
         public void AddPayload(Payload payload)
         {
-            if(payload is null)
+            if(string.IsNullOrWhiteSpace(payload.Name))
             {
-                Console.WriteLine("A queued payload was null.");
+                Console.WriteLine("The CommandQueue received an empty-named payload. This payload will not be executed.");
+                Console.WriteLine($"Thie empty-named payload contains {payload.Sequence.Length} sequence item(s).");
                 return;
             }
             
