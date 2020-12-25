@@ -122,7 +122,7 @@ namespace Streamnesia.Twitch
 
                 var success = int.TryParse(m, out var payloadIndex);
 
-                if(!success)
+                if (!success || payloadIndex < 1 || payloadIndex > 4)
                     return;
 
                 OnCommandSelected.Invoke(payloadIndex);
@@ -136,7 +136,7 @@ namespace Streamnesia.Twitch
 
                 var success = int.TryParse(m, out var payloadIndex);
 
-                if(!success)
+                if (!success || payloadIndex < 1 || payloadIndex > 4)
                     return;
 
                 OnVoted.Invoke(e.ChatMessage.DisplayName, payloadIndex);

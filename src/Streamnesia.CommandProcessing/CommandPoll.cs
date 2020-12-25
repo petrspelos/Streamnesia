@@ -41,6 +41,9 @@ namespace Streamnesia.CommandProcessing
 
         public Payload GetPayloadAt(int index)
         {
+            if (index < 0 || index > 3)
+                throw new IndexOutOfRangeException();
+
             _dataAccessMutex.WaitOne();
 
             var result = _options[index];
