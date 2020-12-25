@@ -143,6 +143,9 @@ namespace Streamnesia.Twitch
             }
             else if (int.TryParse(e.ChatMessage.Message, out var chatMessageNumber))
             {
+                if (chatMessageNumber < 1 || chatMessageNumber > 4)
+                    return;
+
                 OnVoted.Invoke(e.ChatMessage.DisplayName, chatMessageNumber);
             }
         }
