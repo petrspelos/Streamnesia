@@ -18,7 +18,17 @@ namespace Streamnesia.ConsoleApp
 
         static async Task Main(string[] args)
         {
-            var config = JsonConvert.DeserializeObject<StreamnesiaConfig>(File.ReadAllText("streamnesia-config.json"));
+            StreamnesiaConfig config;
+
+            if(File.Exists("streamnesia-config.json"))
+            {
+                config = JsonConvert.DeserializeObject<StreamnesiaConfig>(File.ReadAllText("streamnesia-config.json"));
+            }
+            else
+            {
+                config = new StreamnesiaConfig();
+                File.WriteAllText("streamnesia-config.json", JsonConvert.SerializeObject(config));
+            }
 
             IPayloadLoader payloadLoader = new LocalPayloadLoader(config);
             var payloads = await payloadLoader.GetPayloadsAsync();
