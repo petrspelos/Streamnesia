@@ -20,6 +20,7 @@ namespace Streamnesia.WebApp
         private readonly Bot _bot;
         private readonly Random _rng;
         private readonly PollState _pollState;
+        private readonly IServerLogger _logger;
 
         private IEnumerable<Payload> _payloads;
         private bool _canQueryPoll;
@@ -32,7 +33,8 @@ namespace Streamnesia.WebApp
             Bot bot,
             Random rng,
             PollState pollState,
-            StreamnesiaConfig config
+            StreamnesiaConfig config,
+            IServerLogger logger
         )
         {
             _hub = hub;
@@ -42,6 +44,7 @@ namespace Streamnesia.WebApp
             _bot = bot;
             _rng = rng;
             _pollState = pollState;
+            _logger = logger;
 
             _canQueryPoll = true;
 
@@ -61,6 +64,7 @@ namespace Streamnesia.WebApp
 
         public async Task StartLoop()
         {
+            _logger.Log("Starting the loop");
             _payloads = await _payloadLoader.GetPayloadsAsync();
             _poll.SetPayloadSource(_payloads);
 
@@ -134,6 +138,7 @@ namespace Streamnesia.WebApp
 
         private async Task SendCurrentStatusAsync(double percentage, IEnumerable<PollOption> options, bool isRapidMode)
         {
+            _logger.Log($"Sending {percentage}% update");
             await _hub.Clients.All.SendCoreAsync("UpdateTimePercentage", new object[] { new {
                 percentage,
                 options = options.Select(p => new {
@@ -147,6 +152,7 @@ namespace Streamnesia.WebApp
 
         private async Task SendClearStatusAsync()
         {
+            _logger.Log($"Sending clear update");
             await _hub.Clients.All.SendCoreAsync("UpdateTimePercentage", new object[] { new {
                 percentage = 100.0,
                 options = new object[0],

@@ -1,8 +1,5 @@
-pushd .\src\Streamnesia.ConsoleApp
-dotnet publish -c Release -r win10-x64 /p:PublishSingleFile=true -o ../deployment --self-contained
-popd
-pushd .\src\Streamnesia.WebApp
-dotnet publish -c Release -r win10-x64 /p:PublishSingleFile=true -o ../deployment --self-contained
+pushd .\src\Streamnesia.Gui
+dotnet publish -c Release -r win-x64 /p:PublishSingleFile=true -o ../deployment --self-contained
 popd
 pushd .\src\deployment
 Remove-Item *.pdb
