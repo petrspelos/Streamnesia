@@ -5,7 +5,7 @@ namespace Streamnesia.Gui.Logging
 {
     internal class ServerLogger : IServerLogger
     {
-        public Action<string> OnLog;
+        public Action<string>? OnLog;
 
         public void Log(string message)
         {

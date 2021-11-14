@@ -17,17 +17,17 @@ namespace Streamnesia.WebApp
     {
         private const string StreamnesiaConfigFile = "streamnesia-config.json";
 
-        private readonly IServerLogger _logger;
+        private readonly IGuiServices _guiServices;
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public Startup(IConfiguration configuration, IServerLogger logger)
+        public Startup(IConfiguration configuration, IGuiServices guiServices)
         {
             Configuration = configuration;
-            _logger = logger;
+            _guiServices = guiServices;
         }
 
         public IConfiguration Configuration { get; }
@@ -35,7 +35,8 @@ namespace Streamnesia.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            _logger.Log("Injecting services");
+            _guiServices.Configure(services);
+
             services.AddSingleton(p => GetStreamnesiaConfig());
 
             services.AddSingleton<UpdateHub>();
@@ -46,7 +47,6 @@ namespace Streamnesia.WebApp
             services.AddSingleton<IPayloadLoader, LocalPayloadLoader>();
             services.AddSingleton<Bot>();
             services.AddSingleton<PollState>();
-            services.AddSingleton(_logger);
 
             services.AddControllersWithViews();
             services.AddSignalR();

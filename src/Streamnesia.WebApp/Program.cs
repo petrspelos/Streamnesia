@@ -16,16 +16,16 @@ namespace Streamnesia.WebApp
         {
             CreateHostBuilder(args).Build().Run();
         }
-        public static void Start(CancellationToken cancellationToken, IServerLogger logger)
+        public static void Start(CancellationToken cancellationToken, IGuiServices guiServices)
         {
-            _ = CreateHostBuilder(Array.Empty<string>(), logger).Build().RunAsync(cancellationToken);
+            _ = CreateHostBuilder(Array.Empty<string>(), guiServices).Build().RunAsync(cancellationToken);
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args, IServerLogger logger) =>
+        public static IHostBuilder CreateHostBuilder(string[] args, IGuiServices guiServices) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup(c => new Startup(c.Configuration, logger));
+                    webBuilder.UseStartup(c => new Startup(c.Configuration, guiServices));
                 });
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
