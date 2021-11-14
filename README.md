@@ -1,5 +1,21 @@
 # Streamnesia
 
+<p align="center">
+  <a href="docs/LICENSE.md">
+    <img src="https://img.shields.io/github/license/petrspelos/Streamnesia?style=for-the-badge">
+  </a>
+  <a href="#">
+    <img src="https://img.shields.io/github/workflow/status/petrspelos/Streamnesia/dotnet/master?style=for-the-badge">
+  </a>
+  <a href="#">
+    <img src="https://img.shields.io/codacy/grade/e3b6d88439154ae78ba1da0ef9318e50/master?style=for-the-badge">
+  </a>
+  <a href="https://dot.net">
+    <img src="https://img.shields.io/badge/made%20with-.NET%206-blueviolet?style=for-the-badge">
+  </a>
+</p>
+
+
 Streamnesia is a "Chaos Mod", meaning it changes what happens during your playthrough of the game. Your screen can be upside down for a minute, or maybe all doors unlock. In the base package, there are around 40 different events.
 
 ## Payloads
